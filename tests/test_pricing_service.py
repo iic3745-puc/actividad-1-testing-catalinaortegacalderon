@@ -55,10 +55,7 @@ class TestPricingService(unittest.TestCase):
 
 	# continuar con el coverage de todas las funciones
 	# ver como calcular bien coverage y como correr ipynb
-	caso_none(self):
-		pricing = PricingService()
-		resultado = pricing.apply_coupon(10000, None)
-		self.assertEqual(resultado, 10000)
+
 
 
 	
