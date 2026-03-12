@@ -6,4 +6,12 @@ from src.pricing import PricingService, PricingError
 from src.checkout import CheckoutService, ChargeResult
 
 class TestCheckoutService(unittest.TestCase):
-	pass
+	
+	def test_probando(self):
+		resultado = 1
+		self.assertEqual(resultado, 1)
+
+
+
+
+
