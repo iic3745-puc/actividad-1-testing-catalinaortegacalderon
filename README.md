@@ -17,3 +17,7 @@ Tengo 100% de coverage
 
 Fuentes:
 -Para llevar a cabo esta tarea, se utilizó el material de clases, y la feature "autocomplete" de copilot.
+
+
+Supuestos:
+Se asume que no es necesario hacer Mocks para funciones estables como strip().upper()

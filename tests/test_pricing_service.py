@@ -1,14 +1,10 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from src.models import CartItem, Order
 from src.pricing import PricingService, PricingError
 
 class TestPricingService(unittest.TestCase):
-
-	def test_probando2(self):
-		resultado = 1
-		self.assertEqual(resultado, 1)
 
 	def test_subtotal_cents_primer_if(self):
 		pricing = PricingService()
@@ -125,31 +121,24 @@ class TestPricingService(unittest.TestCase):
 			pricing.shipping_cents(15000, "XX")
 		self.assertEqual(str(cm.exception), "unsupported country")
 	
-	def test_total_cents_sin_cupon(self):
+	@patch('src.pricing.PricingService.subtotal_cents')
+	@patch('src.pricing.PricingService.apply_coupon')
+	@patch('src.pricing.PricingService.tax_cents')
+	@patch('src.pricing.PricingService.shipping_cents')
+	def test_total_cents(self, mock_shipping, mock_tax, mock_apply_coupon
+		, mock_subtotal):
+		mock_subtotal.return_value = 3500
+		mock_apply_coupon.return_value = 3500
+		mock_tax.return_value = 665
+		mock_shipping.return_value = 2500
+
 		pricing = PricingService()
 		total = pricing.total_cents(items=[CartItem("sku1", 1000, 2), CartItem("sku2", 500, 3)], coupon_code="  ", country="CL")
-		# subtotal es 3500
-		# shipping 2500
-		# tax es 665
-		# total es 3500 + 2500 + 665 = 6665
-		# PONER ESTO MAS BONITO!
-		# USO LAS FUNCIONES? O HARDCODEO VALORES? 
+		
 		self.assertEqual(total, 6665)
-	
 
 
 
-
-	# continuar con el coverage de todas las funciones
-	# ver como calcular bien coverage y como correr ipynb
-	# mejorar legibilidad y orden (tal vez poner en funciones nombre variable = valor)
-	# ultimo test esta malo, arreglar
-	# revisar bien documentacion, completa
-	# entender "pricing error" 
-	# citar el autocomplete de copilot, 
-
-	# funcion de total cents: # USO LAS FUNCIONES? O HARDCODEO VALORES?  
-	# creo que mejor usar o no? o usar mock y esas herramientas de clase?
 
 
 

@@ -8,16 +8,7 @@ from src.checkout import CheckoutService, ChargeResult
 
 class TestCheckoutService(unittest.TestCase):
 	
-	def test_charge_result(self):
-		# ver si esto va aca o en otra parte, TENGO QUE PONERLO O NO?
-		# ojala 1 assert por test? si es muy simple filo?
-		result = ChargeResult(ok=True, charge_id="ch_123", reason=None)
-		self.assertTrue(result.ok)
-		self.assertEqual(result.charge_id, "ch_123")
-		self.assertIsNone(result.reason)
-	
 	def test_checkout_initialize(self):
-		## revisar
 		payments = Mock()
 		email = Mock()
 		fraud = Mock()
@@ -33,7 +24,8 @@ class TestCheckoutService(unittest.TestCase):
 		email = Mock()
 		fraud = Mock()
 		repo = Mock()
-		checkout = CheckoutService(payments, email, fraud, repo)
+		pricing = Mock()
+		checkout = CheckoutService(payments, email, fraud, repo, pricing)
 		result = checkout.checkout(
 				user_id="",
 				items=[CartItem("sku1", 1000, 2)],
@@ -43,14 +35,15 @@ class TestCheckoutService(unittest.TestCase):
 		self.assertEqual(result, "INVALID_USER")
 	
 	def test_checkout_invalid_cart(self):
-		# arreglar, dos opciones (con o sin mock)
-		# CREO QUE TENGO Q HACER MOCK PARA SELF.PRICING 
+		# CREO QUE TENGO Q HACER MOCK PARA SELF.PRICING, en este y otras
 		payments = Mock()
 		email = Mock()
 		fraud = Mock()
 		fraud.score.return_value = 0
 		repo = Mock()
-		checkout = CheckoutService(payments, email, fraud, repo)
+		pricing = Mock()
+		pricing.subtotal_cents.side_effect = PricingError("qty must be > 0")
+		checkout = CheckoutService(payments, email, fraud, repo, pricing)
 
 		result = checkout.checkout(
 				user_id="user1",
@@ -66,7 +59,8 @@ class TestCheckoutService(unittest.TestCase):
 		fraud = Mock()
 		fraud.score.return_value = 80
 		repo = Mock()
-		checkout = CheckoutService(payments, email, fraud, repo)
+		pricing = Mock()
+		checkout = CheckoutService(payments, email, fraud, repo, pricing)
 		result = checkout.checkout(
 				user_id="user1",
 				items=[CartItem("sku1", 1000, 2)],
@@ -82,7 +76,8 @@ class TestCheckoutService(unittest.TestCase):
 		fraud = Mock()
 		fraud.score.return_value = 50
 		repo = Mock()
-		checkout = CheckoutService(payments, email, fraud, repo)
+		pricing = Mock()
+		checkout = CheckoutService(payments, email, fraud, repo, pricing)
 		result = checkout.checkout(
 				user_id="user1",
 				items=[CartItem("sku1", 1000, 2)],
@@ -90,8 +85,6 @@ class TestCheckoutService(unittest.TestCase):
 				country="CL",
 			)
 		self.assertEqual(result, "PAYMENT_FAILED:Card declined")
-	
-	
 	
 	@patch("src.checkout.uuid.uuid4")
 	def test_checkout_success(self, mock_uuid):
@@ -104,8 +97,8 @@ class TestCheckoutService(unittest.TestCase):
 		fraud = Mock()
 		fraud.score.return_value = 50
 		repo = Mock()
-
-		checkout = CheckoutService(payments, email, fraud, repo)
+		pricing = Mock()
+		checkout = CheckoutService(payments, email, fraud, repo, pricing)
 
 		result = checkout.checkout(
 			user_id="user1",
@@ -116,18 +109,6 @@ class TestCheckoutService(unittest.TestCase):
 
 		self.assertEqual(result, "OK:12345678-1234-5678-1234-567812345678")
 		
-
-	
-
-	# usar mock o funciones reales? --- USAR MOCKS PARA TODO, ASI NO DEPENDEMOS DE OTRAS FUNCIONES, SOLO DE LA LOGICA DE CHECKOUT
-	# repasar bien clase mock, y otras clases por si se me paso algo
-	# sacar # innecesaris
-	# solo 1 asert por test!!
-	# arreglar tests que estan mal
-	# investigar si esta bien usar patch o es mejor moc
-
-
-
 
 
 
