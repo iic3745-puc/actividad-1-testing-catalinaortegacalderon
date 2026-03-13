@@ -35,14 +35,13 @@ class TestCheckoutService(unittest.TestCase):
 		self.assertEqual(result, "INVALID_USER")
 	
 	def test_checkout_invalid_cart(self):
-		# CREO QUE TENGO Q HACER MOCK PARA SELF.PRICING, en este y otras
 		payments = Mock()
 		email = Mock()
 		fraud = Mock()
 		fraud.score.return_value = 0
 		repo = Mock()
 		pricing = Mock()
-		pricing.subtotal_cents.side_effect = PricingError("qty must be > 0")
+		pricing.total_cents.side_effect = PricingError("qty must be > 0")
 		checkout = CheckoutService(payments, email, fraud, repo, pricing)
 
 		result = checkout.checkout(
