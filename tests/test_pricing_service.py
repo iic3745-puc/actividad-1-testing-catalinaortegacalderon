@@ -125,23 +125,32 @@ class TestPricingService(unittest.TestCase):
 			pricing.shipping_cents(15000, "XX")
 		self.assertEqual(str(cm.exception), "unsupported country")
 	
-	def test_total_cents(self):
+	def test_total_cents_sin_cupon(self):
 		pricing = PricingService()
-		subtotal = pricing.subtotal_cents([CartItem("sku1", 1000, 2), CartItem("sku2", 500, 3)])
-		net_subtotal = pricing.apply_coupon(subtotal, "SAVE10")
-		tax = pricing.tax_cents(net_subtotal, "CL")
-		shipping = pricing.shipping_cents(net_subtotal, "CL")
-		total = net_subtotal + tax + shipping
-		self.assertEqual(total, 10900)
+		total = pricing.total_cents(items=[CartItem("sku1", 1000, 2), CartItem("sku2", 500, 3)], coupon_code="  ", country="CL")
+		# subtotal es 3500
+		# shipping 2500
+		# tax es 665
+		# total es 3500 + 2500 + 665 = 6665
+		# PONER ESTO MAS BONITO!
+		# USO LAS FUNCIONES? O HARDCODEO VALORES? 
+		self.assertEqual(total, 6665)
 	
+
 
 
 
 	# continuar con el coverage de todas las funciones
 	# ver como calcular bien coverage y como correr ipynb
-	# mejorar legibilidad y orden
+	# mejorar legibilidad y orden (tal vez poner en funciones nombre variable = valor)
 	# ultimo test esta malo, arreglar
-	
+	# revisar bien documentacion, completa
+	# entender "pricing error" 
+	# citar el autocomplete de copilot, 
+
+	# funcion de total cents: # USO LAS FUNCIONES? O HARDCODEO VALORES?  
+	# creo que mejor usar o no? o usar mock y esas herramientas de clase?
+
 
 
 
